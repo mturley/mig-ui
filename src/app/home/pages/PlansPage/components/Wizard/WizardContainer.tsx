@@ -101,15 +101,50 @@ export interface IOtherProps {
 }
 
 const WizardContainer = withFormik<IOtherProps, IFormValues>({
+  validate: (values, props) => {
+    const errors: any = {}; // TODO figure out why using FormikErrors<IFormValues> here causes type errors below
+
+    if (!values.planName) {
+      errors.planName = 'Required';
+    } else if (!utils.testDNS1123(values.planName)) {
+      errors.planName = utils.DNS1123Error(values.planName);
+    } else if (props.planList.some((plan) => plan.MigPlan.metadata.name === values.planName)) {
+      errors.planName =
+        'A plan with that name already exists. Enter a unique name for the migration plan.';
+    }
+    if (!values.sourceCluster) {
+      errors.sourceCluster = 'Required';
+    }
+    if (!values.sourceTokenRef) {
+      errors.sourceTokenRef = 'Required';
+    }
+    // if (!values.selectedNamespaces || values.selectedNamespaces.length === 0) {
+    if (!values.selectedNamespaces) {
+      errors.selectedNamespaces = 'Required';
+    }
+
+    if (!values.targetCluster) {
+      errors.targetCluster = 'Required';
+    }
+
+    if (!values.targetTokenRef) {
+      errors.targetTokenRef = 'Required';
+    }
+    if (!values.selectedStorage) {
+      errors.selectedStorage = 'Required';
+    }
+    console.log('VALIDATING!', values, errors);
+    return errors;
+  },
   mapPropsToValues: ({ editPlanObj, isEdit }) => {
     const values: IFormValues = {
       planName: '',
-      sourceCluster: null,
+      sourceCluster: '',
       sourceTokenRef: null,
-      targetCluster: null,
+      targetCluster: '',
       targetTokenRef: null,
       selectedNamespaces: [],
-      selectedStorage: null,
+      selectedStorage: '',
       persistentVolumes: [],
       pvStorageClassAssignment: {},
       pvVerifyFlagAssignment: {},
@@ -129,45 +164,11 @@ const WizardContainer = withFormik<IOtherProps, IFormValues>({
     return values;
   },
 
-  validate: (values, props) => {
-    const errors: any = {}; // TODO figure out why using FormikErrors<IFormValues> here causes type errors below
-
-    console.log('VALIDATING!', values);
-
-    if (!values.planName) {
-      errors.planName = 'Required';
-    } else if (!utils.testDNS1123(values.planName)) {
-      errors.planName = utils.DNS1123Error(values.planName);
-    } else if (props.planList.some((plan) => plan.MigPlan.metadata.name === values.planName)) {
-      errors.planName =
-        'A plan with that name already exists. Enter a unique name for the migration plan.';
-    }
-    if (!values.sourceCluster) {
-      errors.sourceCluster = 'Required';
-    }
-    if (!values.sourceTokenRef) {
-      errors.sourceTokenRef = 'Required';
-    }
-    if (!values.selectedNamespaces || values.selectedNamespaces.length === 0) {
-      errors.selectedNamespaces = 'Required';
-    }
-    if (!values.targetCluster) {
-      errors.targetCluster = 'Required';
-    }
-    if (!values.targetTokenRef) {
-      errors.targetTokenRef = 'Required';
-    }
-    if (!values.selectedStorage) {
-      errors.selectedStorage = 'Required';
-    }
-    return errors;
-  },
-
   handleSubmit: () => {
     return null;
   },
   validateOnBlur: false,
-  enableReinitialize: true,
+  enableReinitialize: false,
 })(WizardComponent);
 
 const mapStateToProps = (state: IReduxState) => {

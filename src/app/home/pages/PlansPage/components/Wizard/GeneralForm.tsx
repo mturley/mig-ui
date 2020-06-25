@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { FormikProps } from 'formik';
+import { FormikProps, Field } from 'formik';
 import { IFormValues, IOtherProps } from './WizardContainer';
 import { Form, FormGroup, Grid, GridItem, TextInput, Title } from '@patternfly/react-core';
 import spacing from '@patternfly/react-styles/css/utilities/Spacing/spacing';
@@ -68,33 +68,40 @@ const GeneralForm: React.FunctionComponent<IGeneralFormProps> = ({
       .map((storage) => storage.MigStorage.metadata.name);
   }
 
-  const handleStorageChange = (value) => {
+  const handleStorageChange = (value, event) => {
+    // console.log('value', value, 'event', event);
+    // onHandleChange(value, event);
+    // setFieldValue('selectedStorage', value, true);
+    // setFieldTouched('selectedStorage', true, true);
     const matchingStorage = storageList.find((c) => c.MigStorage.metadata.name === value);
     if (matchingStorage) {
-      setFieldValue('selectedStorage', value);
-      setFieldTouched('selectedStorage', true, true);
+      // onHandleChange(value, event);
+      setFieldValue('selectedStorage', value, true);
+      setFieldTouched('selectedStorage', true, false);
     }
   };
 
   const handleSourceChange = (value) => {
     const matchingCluster = clusterList.find((c) => c.MigCluster.metadata.name === value);
     if (matchingCluster) {
-      setFieldValue('sourceCluster', value);
-      setFieldTouched('sourceCluster', true, true);
-      setFieldValue('selectedNamespaces', []);
-      setFieldValue('sourceTokenRef', null);
+      setFieldValue('sourceCluster', value, true);
+      setFieldTouched('sourceCluster', true, false);
+      // setFieldValue('selectedNamespaces', []);
+      setFieldValue('sourceTokenRef', null, true);
+      setFieldTouched('sourceTokenRef', true, false);
     }
   };
 
   const handleTargetChange = (value) => {
     const matchingCluster = clusterList.find((c) => c.MigCluster.metadata.name === value);
     if (matchingCluster) {
-      setFieldValue('targetCluster', value);
-      setFieldTouched('targetCluster', true, true);
-      setFieldValue('targetTokenRef', null);
+      setFieldValue('targetCluster', value, true);
+      setFieldTouched('targetCluster', true, false);
+      setFieldValue('targetTokenRef', null, true);
+      setFieldTouched('targetTokenRef', true, false);
     }
   };
-
+  console.log('rerender');
   return (
     <Form>
       <Title size="md" className={styles.fieldGridTitle}>
@@ -141,10 +148,12 @@ const GeneralForm: React.FunctionComponent<IGeneralFormProps> = ({
           >
             <SimpleSelect
               id="sourceCluster"
+              onBlur={handleBlur}
               onChange={handleSourceChange}
               options={srcClusterOptions}
               value={values.sourceCluster}
               placeholderText="Select source..."
+              // name="sourceCluster"
             />
           </FormGroup>
           <TokenSelect
@@ -173,6 +182,7 @@ const GeneralForm: React.FunctionComponent<IGeneralFormProps> = ({
             <SimpleSelect
               id="targetCluster"
               onChange={handleTargetChange}
+              onBlur={handleBlur}
               options={targetClusterOptions}
               value={values.targetCluster}
               placeholderText="Select target..."
@@ -209,6 +219,7 @@ const GeneralForm: React.FunctionComponent<IGeneralFormProps> = ({
           >
             <SimpleSelect
               id="selectedStorage"
+              onBlur={handleBlur}
               onChange={handleStorageChange}
               options={storageOptions}
               value={values.selectedStorage}

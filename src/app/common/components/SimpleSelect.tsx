@@ -20,13 +20,15 @@ export interface ISimpleSelectProps
     SelectProps,
     'onChange' | 'isExpanded' | 'onToggle' | 'onSelect' | 'selections' | 'value'
   > {
-  onChange: (selection: OptionLike) => void;
+  onChange: (selection: OptionLike, event: any) => void;
+  onBlur?: (event: any) => void;
   options: OptionLike[];
   value: OptionLike | OptionLike[];
 }
 
 const SimpleSelect: React.FunctionComponent<ISimpleSelectProps> = ({
   onChange,
+  onBlur,
   options,
   value,
   placeholderText = 'Select...',
@@ -39,9 +41,10 @@ const SimpleSelect: React.FunctionComponent<ISimpleSelectProps> = ({
       isExpanded={isExpanded}
       onToggle={setIsExpanded}
       onSelect={(event, selection: OptionLike) => {
-        onChange(selection);
+        onChange(selection, event);
         setIsExpanded(false);
       }}
+      onBlur={onBlur}
       selections={value}
       {...props}
     >
