@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { FormikProps } from 'formik';
+import { useFormikContext } from 'formik';
 import { IFormValues, IOtherProps } from './WizardContainer';
 import { Form, FormGroup, Grid, GridItem, TextInput, Title } from '@patternfly/react-core';
 import spacing from '@patternfly/react-styles/css/utilities/Spacing/spacing';
@@ -9,33 +9,24 @@ import { INameNamespaceRef } from '../../../../../common/duck/types';
 import { useForcedValidationOnChange } from '../../../../../common/duck/hooks';
 const styles = require('./GeneralForm.module');
 
-interface IGeneralFormProps
-  extends Pick<IOtherProps, 'clusterList' | 'storageList' | 'isEdit'>,
-    Pick<
-      FormikProps<IFormValues>,
-      | 'handleBlur'
-      | 'handleChange'
-      | 'setFieldTouched'
-      | 'setFieldValue'
-      | 'values'
-      | 'touched'
-      | 'errors'
-      | 'validateForm'
-    > {}
+type IGeneralFormProps = Pick<IOtherProps, 'clusterList' | 'storageList' | 'isEdit'>;
 
 const GeneralForm: React.FunctionComponent<IGeneralFormProps> = ({
   clusterList,
   storageList,
-  errors,
-  handleBlur,
-  handleChange,
   isEdit,
-  setFieldTouched,
-  setFieldValue,
-  touched,
-  values,
-  validateForm,
 }: IGeneralFormProps) => {
+  const {
+    handleBlur,
+    handleChange,
+    setFieldTouched,
+    setFieldValue,
+    values,
+    touched,
+    errors,
+    validateForm,
+  } = useFormikContext<IFormValues>();
+
   useForcedValidationOnChange<IFormValues>(values, isEdit, validateForm);
 
   const planNameInputRef = useRef(null);
