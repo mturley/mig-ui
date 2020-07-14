@@ -113,6 +113,71 @@ export const defaultInitialValues: IFormValues = {
   pvVerifyFlagAssignment: {},
   pvCopyMethodAssignment: {},
 };
+// const WizardContainer = withFormik<IOtherProps, IFormValues>({
+//   mapPropsToValues: ({ editPlanObj, isEdit }) => {
+//     const values: IFormValues = {
+//       planName: '',
+//       sourceCluster: null,
+//       sourceTokenRef: null,
+//       targetCluster: null,
+//       targetTokenRef: null,
+//       selectedNamespaces: [],
+//       selectedStorage: null,
+//       persistentVolumes: [],
+//       pvStorageClassAssignment: {},
+//       pvVerifyFlagAssignment: {},
+//       pvCopyMethodAssignment: {},
+//     };
+//     if (editPlanObj && isEdit) {
+//       values.planName = editPlanObj.metadata.name || '';
+//       values.sourceCluster = editPlanObj.spec.srcMigClusterRef.name || null;
+//       values.targetCluster = editPlanObj.spec.destMigClusterRef.name || null;
+//       values.selectedNamespaces = editPlanObj.spec.namespaces || [];
+//       values.selectedStorage = editPlanObj.spec.migStorageRef.name || null;
+//       // TODO need to look into this closer, but it was resetting form values after pv discovery is run & messing with the UI state
+//       // See https://github.com/konveyor/mig-ui/issues/797
+//       // values.persistentVolumes = editPlanObj.spec.persistentVolumes || [];
+//     }
+
+//     return values;
+//   },
+
+//   validate: (values, props) => {
+//     const errors: any = {}; // TODO figure out why using FormikErrors<IFormValues> here causes type errors below
+
+//     if (!values.planName) {
+//       errors.planName = 'Required';
+//     } else if (!utils.testDNS1123(values.planName)) {
+//       errors.planName = utils.DNS1123Error(values.planName);
+//     } else if (
+//       !props.isEdit &&
+//       props.planList.some((plan) => plan.MigPlan.metadata.name === values.planName)
+//     ) {
+//       errors.planName =
+//         'A plan with that name already exists. Enter a unique name for the migration plan.';
+//     }
+//     if (!values.sourceCluster) {
+//       errors.sourceCluster = 'Required';
+//     }
+//     if (!values.selectedNamespaces || values.selectedNamespaces.length === 0) {
+//       errors.selectedNamespaces = 'Required';
+//     }
+//     if (!values.targetCluster) {
+//       errors.targetCluster = 'Required';
+//     }
+//     if (NON_ADMIN_ENABLED) {
+//       if (!values.sourceTokenRef) {
+//         errors.sourceTokenRef = 'Required';
+//       }
+//       if (!values.targetTokenRef) {
+//         errors.targetTokenRef = 'Required';
+//       }
+//     }
+//     if (!values.selectedStorage) {
+//       errors.selectedStorage = 'Required';
+//     }
+//     return errors;
+//   },
 
 const WizardContainer: React.FunctionComponent<IOtherProps> = (props: IOtherProps) => {
   const { editPlanObj, isEdit, planList } = props;

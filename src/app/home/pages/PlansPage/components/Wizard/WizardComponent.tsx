@@ -15,6 +15,7 @@ import { StatusType } from '../../../../../common/components/StatusIcon';
 import { getTokenInfo } from '../../../TokensPage/helpers';
 import { INameNamespaceRef } from '../../../../../common/duck/types';
 import { isSameResource } from '../../../../../common/helpers';
+import { NON_ADMIN_ENABLED } from '../../../../../../TEMPORARY_GLOBAL_FLAGS';
 
 const styles = require('./WizardComponent.module');
 
@@ -115,15 +116,21 @@ const WizardComponent = (props: IOtherProps) => {
               <GeneralForm clusterList={clusterList} storageList={storageList} isEdit={isEdit} />
             </WizardStepContainer>
           ),
-          enableNext:
-            areFieldsTouchedAndValid([
-              'planName',
-              'sourceCluster',
-              'sourceTokenRef',
-              'targetCluster',
-              'targetTokenRef',
-              'selectedStorage',
-            ]) && areSelectedTokensValid(['sourceTokenRef', 'targetTokenRef']),
+          enableNext: NON_ADMIN_ENABLED
+            ? areFieldsTouchedAndValid([
+                'planName',
+                'sourceCluster',
+                'sourceTokenRef',
+                'targetCluster',
+                'targetTokenRef',
+                'selectedStorage',
+              ]) && areSelectedTokensValid(['sourceTokenRef', 'targetTokenRef'])
+            : areFieldsTouchedAndValid([
+                'planName',
+                'sourceCluster',
+                'targetCluster',
+                'selectedStorage',
+              ]),
         },
         {
           id: stepId.Namespaces,
@@ -264,11 +271,15 @@ const WizardComponent = (props: IOtherProps) => {
         addPlanRequest({
           planName: values.planName,
           sourceCluster: values.sourceCluster,
-          sourceTokenRef: values.sourceTokenRef,
           targetCluster: values.targetCluster,
-          targetTokenRef: values.targetTokenRef,
           selectedStorage: values.selectedStorage,
           namespaces: values.selectedNamespaces,
+          ...(NON_ADMIN_ENABLED
+            ? {
+                sourceTokenRef: values.sourceTokenRef,
+                targetTokenRef: values.targetTokenRef,
+              }
+            : {}),
         });
       }
     }
